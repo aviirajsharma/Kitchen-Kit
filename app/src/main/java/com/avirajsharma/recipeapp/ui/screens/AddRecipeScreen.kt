@@ -1,4 +1,4 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.avirajsharma.recipeapp.database.Recipe
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +36,7 @@ fun AddRecipeScreen(
     var ingredients by remember { mutableStateOf("") }
     var instructions by remember { mutableStateOf("") }
     var cookingTime by remember { mutableStateOf("") }
+    var videoUrl by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -91,6 +93,14 @@ fun AddRecipeScreen(
                 minLines = 6
             )
 
+            OutlinedTextField(
+                value = videoUrl,
+                onValueChange = { videoUrl = it },
+                label = { Text("Youtube Video Link") },
+                placeholder = { Text("Copy Paste URL of the Recipe Youtube Video") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Button(
                 onClick = {
                     if(title.isNotEmpty() && ingredients.isNotEmpty() && instructions.isNotEmpty()){
@@ -99,7 +109,8 @@ fun AddRecipeScreen(
                             title = title,
                             ingredients = ingredients.split("\n").filter { it.isNotBlank() },
                             instructions = instructions,
-                            cookingTime = cookingTime.ifBlank { "Not Specified" }
+                            cookingTime = cookingTime.ifBlank { "Not Specified" },
+                            videoUrl = videoUrl
                         )
                         onSaveClick(recipe)
                     }

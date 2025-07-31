@@ -1,4 +1,4 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -7,6 +7,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.avirajsharma.recipeapp.RecipeRepository
+import com.avirajsharma.recipeapp.ui.screens.AddRecipeScreen
+import com.avirajsharma.recipeapp.ui.screens.ChatAIScreen
+import com.avirajsharma.recipeapp.ui.screens.RecipeDetailScreen
+import com.avirajsharma.recipeapp.ui.screens.RecipeListScreen
 
 @Composable
 fun RecipeNavigation(
@@ -58,6 +63,9 @@ fun RecipeNavigation(
                     navController.popBackStack()
                 }
             )
+        }
+        composable("chatai") {
+            ChatAIScreen()
         }
     }
 }

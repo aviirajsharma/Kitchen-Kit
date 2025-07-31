@@ -1,4 +1,4 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.database
 
 import androidx.room.Dao
 import androidx.room.Delete

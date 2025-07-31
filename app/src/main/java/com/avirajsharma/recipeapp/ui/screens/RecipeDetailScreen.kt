@@ -1,6 +1,9 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.ui.screens
 
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,9 +28,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.avirajsharma.recipeapp.RecipeRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +42,8 @@ fun RecipeDetailScreen(
     onBackClick: () -> Unit
 ) {
     val recipe = repository.getRecipeById(recipeId)
+
+    val context = LocalContext.current
 
     if (recipe == null) {
         Box(
@@ -110,7 +117,7 @@ fun RecipeDetailScreen(
                         .padding(vertical = 4.dp)
                 ) {
                     Text(
-                        text = ". ",
+                        text = "->",
                         style = MaterialTheme.typography.bodyLarge
                     )
 
@@ -134,6 +141,26 @@ fun RecipeDetailScreen(
                 text = recipe.instructions,
                 style = MaterialTheme.typography.bodyLarge,
                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.5
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Watch Video",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = recipe.videoUrl,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(recipe.videoUrl))
+                    context.startActivity(intent)
+                }
             )
         }
 

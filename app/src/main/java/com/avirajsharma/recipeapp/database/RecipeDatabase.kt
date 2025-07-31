@@ -1,4 +1,4 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.database
 
 import android.content.Context
 import androidx.room.Database
@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [Recipe::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -20,8 +20,8 @@ abstract class RecipeDatabase: RoomDatabase(){
         private var INSTANCE : RecipeDatabase? = null
 
 
-        fun getDataBase(context: Context): RecipeDatabase{
-            return INSTANCE?: synchronized(this){
+        fun getDataBase(context: Context): RecipeDatabase {
+            return INSTANCE ?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext, //It is passed to make sure Room uses app-level context (not just a screen).This prevents memory leaks — especially when DB is accessed outside activities.
                     RecipeDatabase::class.java,

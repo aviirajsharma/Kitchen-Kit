@@ -1,4 +1,4 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.avirajsharma.recipeapp.database.Recipe
+import com.avirajsharma.recipeapp.RecipeRepository
+import com.avirajsharma.recipeapp.ui.composables.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,9 +24,7 @@ fun RecipeListScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Kitchen-Kit") }
-            )
+            TopBar("Kitchen-Kit")
         },
         floatingActionButton = {
             FloatingActionButton(

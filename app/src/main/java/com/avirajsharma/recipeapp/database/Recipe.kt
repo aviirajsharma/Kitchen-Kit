@@ -1,4 +1,4 @@
-package com.avirajsharma.recipeapp
+package com.avirajsharma.recipeapp.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -14,4 +14,5 @@ data class Recipe(
     val ingredients : List<String>,
     val instructions : String,
     val cookingTime : String = "30 mins",
+    val videoUrl : String
 )
