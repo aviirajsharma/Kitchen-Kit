@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,7 +40,8 @@ import com.avirajsharma.recipeapp.RecipeRepository
 fun RecipeDetailScreen(
     recipeId: Int,
     repository: RecipeRepository,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onEditClick :()-> Unit
 ) {
     val recipe = repository.getRecipeById(recipeId)
 
@@ -63,9 +65,15 @@ fun RecipeDetailScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
+                },
+                actions = {
+                    IconButton(onClick = onEditClick) {
+                        Icon(Icons.Default.Edit, contentDescription = "Edit")
+                    }
                 }
             )
         }
+
     ) { paddingValues ->
         Column(
             modifier = Modifier

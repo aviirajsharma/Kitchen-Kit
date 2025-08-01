@@ -12,6 +12,7 @@ import com.avirajsharma.recipeapp.ui.screens.AddRecipeScreen
 import com.avirajsharma.recipeapp.ui.screens.ChatAIScreen
 import com.avirajsharma.recipeapp.ui.screens.RecipeDetailScreen
 import com.avirajsharma.recipeapp.ui.screens.RecipeListScreen
+import com.avirajsharma.recipeapp.ui.screens.UpdateRecipeScreen
 
 @Composable
 fun RecipeNavigation(
@@ -32,7 +33,10 @@ fun RecipeNavigation(
                 onAddRecipeClick = {
                     navController.navigate("add_recipe")
                 },
-                repository = repository
+                repository = repository,
+                deleteRecipe = { recipe ->
+                    repository.deleteRecipe(recipe)
+                }
             )
         }
 
@@ -47,6 +51,7 @@ fun RecipeNavigation(
                 onBackClick = {
                     navController.popBackStack()
                 },
+                onEditClick = { navController.navigate("update_recipe/$recipeId") },
                 repository = repository
             )
         }
@@ -66,6 +71,22 @@ fun RecipeNavigation(
         }
         composable("chatai") {
             ChatAIScreen()
+        }
+        composable("update_recipe/{recipeId}",
+            arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
+            ) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getInt("recipeId")?: 0
+            UpdateRecipeScreen(
+                recipeId = recipeId,
+                repository = repository,
+                onUpdateClick = { recipe ->
+                    repository.updateRecipe(recipe)
+                    navController.popBackStack()
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

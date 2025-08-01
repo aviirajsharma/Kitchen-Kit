@@ -31,6 +31,18 @@ class RecipeRepository(private val recipeDao: RecipeDao) {
         }
     }
 
+    fun deleteRecipe(recipe: Recipe) {
+        CoroutineScope(Dispatchers.IO).launch {
+            recipeDao.deleteRecipe(recipe)
+        }
+    }
+
+    fun updateRecipe(recipe: Recipe){
+        CoroutineScope(Dispatchers.IO).launch {
+            recipeDao.updateRecipe(recipe)
+        }
+    }
+
     companion object{
         private var INSTANCE : RecipeRepository? = null
 

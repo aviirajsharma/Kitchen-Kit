@@ -6,8 +6,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,7 +22,8 @@ import com.avirajsharma.recipeapp.ui.composables.TopBar
 fun RecipeListScreen(
     repository: RecipeRepository,
     onRecipeClick: (Int) -> Unit,
-    onAddRecipeClick: () -> Unit
+    onAddRecipeClick: () -> Unit,
+    deleteRecipe: (recipe: Recipe) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -44,7 +47,8 @@ fun RecipeListScreen(
             items(repository.recipes) { recipe ->
                 RecipeItem(
                     recipe = recipe,
-                    onClick = { onRecipeClick(recipe.id) }
+                    onClick = { onRecipeClick(recipe.id) },
+                    deleteRecipe = { deleteRecipe(recipe) }
                 )
             }
         }
@@ -54,7 +58,8 @@ fun RecipeListScreen(
 @Composable
 fun RecipeItem(
     recipe: Recipe,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    deleteRecipe: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -62,20 +67,29 @@ fun RecipeItem(
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = recipe.title,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Cooking time: ${recipe.cookingTime}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Column(
+                modifier = Modifier.padding(16.dp).weight(1f)
+            ) {
+                Text(
+                    text = recipe.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Cooking time: ${recipe.cookingTime}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            IconButton(onClick = deleteRecipe, modifier = Modifier.padding(8.dp)) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete Recipe")
+            }
         }
     }
 }
