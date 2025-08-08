@@ -17,10 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.avirajsharma.recipeapp.domain.model.Recipe
-import com.avirajsharma.recipeapp.presentation.composables.TopBar
 import com.avirajsharma.recipeapp.presentation.viewmodel.RecipeListViewModel
+import com.avirajsharma.recipeapp.presentation.composables.TopAppBar
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeListScreen(
     onRecipeClick: (Int) -> Unit,
@@ -32,7 +33,7 @@ fun RecipeListScreen(
 
     Scaffold(
         topBar = {
-            TopBar("Kitchen-Kit")
+            TopAppBar("Kitchen-Kit")
         },
         floatingActionButton = {
             FloatingActionButton(
