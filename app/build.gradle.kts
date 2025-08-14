@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.window)
+    implementation(libs.androidx.foundation.layout.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -84,4 +86,14 @@ dependencies {
 
     // Gemini AI
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    //Material Icon
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+    // Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
+
+    implementation("androidx.compose.material3:material3-window-size-class-android:1.2.1")
+
 }

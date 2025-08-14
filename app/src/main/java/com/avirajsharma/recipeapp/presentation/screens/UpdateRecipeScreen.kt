@@ -1,39 +1,64 @@
 package com.avirajsharma.recipeapp.presentation.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.avirajsharma.recipeapp.domain.model.Recipe
+import com.avirajsharma.recipeapp.presentation.composables.RecipeTopAppBar
 import com.avirajsharma.recipeapp.presentation.viewmodel.UpdateRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,20 +66,27 @@ import com.avirajsharma.recipeapp.presentation.viewmodel.UpdateRecipeViewModel
 fun UpdateRecipeScreen(
     recipeId: Int,
     onUpdateClick: () -> Unit,
-    onBackClick: () -> Unit
-
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: UpdateRecipeViewModel = hiltViewModel()
-    
     val recipe by viewModel.recipe.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-    var title by remember { mutableStateOf("") }
-    var ingredients by remember { mutableStateOf("") }
-    var instructions by remember { mutableStateOf("") }
-    var cookingTime by remember { mutableStateOf("") }
-    var videoUrl by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    var title by rememberSaveable { mutableStateOf("") }
+    var ingredients by rememberSaveable { mutableStateOf("") }
+    var instructions by rememberSaveable { mutableStateOf("") }
+    var cookingTime by rememberSaveable { mutableStateOf("") }
+    var videoUrl by rememberSaveable { mutableStateOf("") }
     var isDataLoaded by remember { mutableStateOf(false) }
+
+    // Form validation states
+    var titleError by remember { mutableStateOf<String?>(null) }
+    var ingredientsError by remember { mutableStateOf<String?>(null) }
+    var instructionsError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(recipeId) {
         viewModel.loadRecipe(recipeId)
@@ -73,112 +105,237 @@ fun UpdateRecipeScreen(
         }
     }
 
+    fun validateTitle(value: String): String? {
+        return when {
+            value.isBlank() -> "Recipe title is required"
+            value.length < 3 -> "Title must be at least 3 characters"
+            value.length > 100 -> "Title must be less than 100 characters"
+            else -> null
+        }
+    }
+
+    fun validateIngredients(value: String): String? {
+        return when {
+            value.isBlank() -> "Ingredients are required"
+            value.split("\n")
+                .filter { it.trim().isNotBlank() }.size < 2 -> "Add at least 2 ingredients"
+
+            else -> null
+        }
+    }
+
+    fun validateInstructions(value: String): String? {
+        return when {
+            value.isBlank() -> "Instructions are required"
+            value.length < 10 -> "Instructions must be more detailed"
+            else -> null
+        }
+    }
+
+    val isFormValid = titleError == null && ingredientsError == null &&
+            instructionsError == null && title.isNotBlank() &&
+            ingredients.isNotBlank() && instructions.isNotBlank()
+
     recipe?.let { currentRecipe ->
         Scaffold(
+            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopAppBar(
-                    title = { Text("Update Recipe") },
+                RecipeTopAppBar(
+                    title = "Update Recipe",
                     navigationIcon = {
                         IconButton(onClick = onBackClick) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Recipe Title") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading,
-                    singleLine = true
-                )
-
-                OutlinedTextField(
-                    value = cookingTime,
-                    onValueChange = { cookingTime = it },
-                    label = { Text("Cooking Time") },
-                    placeholder = { Text("e.g., 30 mins") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading,
-                    singleLine = true
-                )
-
-                OutlinedTextField(
-                    value = ingredients,
-                    onValueChange = { ingredients = it },
-                    label = { Text("Ingredients") },
-                    placeholder = { Text("Enter each ingredient on a new line") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading,
-                    minLines = 4,
-                    maxLines = 8
-                )
-
-                OutlinedTextField(
-                    value = instructions,
-                    onValueChange = { instructions = it },
-                    label = { Text("Instructions") },
-                    placeholder = { Text("Enter cooking instructions") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading,
-                    minLines = 6,
-                    maxLines = 10
-                )
-
-                OutlinedTextField(
-                    value = videoUrl,
-                    onValueChange = { videoUrl = it },
-                    label = { Text("Youtube Video Link") },
-                    placeholder = { Text("Copy Paste URL of the Recipe Youtube Video") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading,
-                    singleLine = true
-                )
-
-                Button(
-                    onClick = {
-                        if (title.isNotEmpty() && ingredients.isNotEmpty() && instructions.isNotEmpty()) {
-                            isLoading = true
-                            val updatedRecipe = Recipe(
-                                id = currentRecipe.id,
-                                title = title.trim(),
-                                ingredients = ingredients.split("\n")
-                                    .map { it.trim() }
-                                    .filter { it.isNotBlank() },
-                                instructions = instructions.trim(),
-                                cookingTime = cookingTime.trim().ifBlank { "Not Specified" },
-                                videoUrl = videoUrl.trim()
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Navigate back",
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
-                            viewModel.updateRecipe(updatedRecipe) {
-                                isLoading = false
-                                onUpdateClick()
-                            }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = title.isNotBlank() &&
-                            ingredients.isNotBlank() &&
-                            instructions.isNotBlank() &&
-                            !isLoading
+                    scrollBehavior = scrollBehavior
+                )
+            },
+            bottomBar = {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.surface
                 ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp
+                    Column {
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(
+                            onClick = {
+                                if (isFormValid) {
+                                    val updatedRecipe = Recipe(
+                                        id = currentRecipe.id,
+                                        title = title.trim(),
+                                        ingredients = ingredients.split("\n")
+                                            .map { it.trim() }
+                                            .filter { it.isNotBlank() },
+                                        instructions = instructions.trim(),
+                                        cookingTime = cookingTime.trim()
+                                            .ifBlank { "Not Specified" },
+                                        videoUrl = videoUrl.trim()
+                                    )
+                                    viewModel.updateRecipe(updatedRecipe, onUpdateClick)
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            enabled = isFormValid && !isLoading
+                        ) {
+                            AnimatedContent(
+                                targetState = isLoading,
+                                transitionSpec = {
+                                    fadeIn() togetherWith fadeOut()
+                                },
+                                label = "update_button_content"
+                            ) { loading ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    if (loading) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(16.dp),
+                                            strokeWidth = 2.dp,
+                                            color = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "Updating...",
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.Save,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "Update Recipe",
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
-                    Text("Update Recipe")
+                }
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    RecipeInputField(
+                        value = title,
+                        onValueChange = {
+                            title = it
+                            titleError = validateTitle(it)
+                        },
+                        label = "Recipe Title",
+                        placeholder = "Enter a delicious recipe name",
+                        errorMessage = titleError,
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Restaurant,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    )
+                }
+
+                item {
+                    RecipeInputField(
+                        value = cookingTime,
+                        onValueChange = { cookingTime = it },
+                        label = "Cooking Time",
+                        placeholder = "e.g., 30 minutes, 2 hours",
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Schedule,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    )
+                }
+
+                item {
+                    RecipeInputField(
+                        value = ingredients,
+                        onValueChange = {
+                            ingredients = it
+                            ingredientsError = validateIngredients(it)
+                        },
+                        label = "Ingredients",
+                        placeholder = "Enter each ingredient on a new line\ne.g., 2 cups flour\n1 tsp salt",
+                        errorMessage = ingredientsError,
+                        minLines = 4,
+                        maxLines = 8,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.List,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    )
+                }
+
+                item {
+                    RecipeInputField(
+                        value = instructions,
+                        onValueChange = {
+                            instructions = it
+                            instructionsError = validateInstructions(it)
+                        },
+                        label = "Instructions",
+                        placeholder = "Describe the cooking steps in detail...",
+                        errorMessage = instructionsError,
+                        minLines = 6,
+                        maxLines = 12,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.MenuBook,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    )
+                }
+
+                item {
+                    RecipeInputField(
+                        value = videoUrl,
+                        onValueChange = { videoUrl = it },
+                        label = "YouTube Video Link (Optional)",
+                        placeholder = "Paste YouTube URL here",
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.VideoLibrary,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }
@@ -187,7 +344,85 @@ fun UpdateRecipeScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                modifier = Modifier.size(48.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Composable
+private fun RecipeInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String = "",
+    errorMessage: String? = null,
+    singleLine: Boolean = false,
+    minLines: Int = 1,
+    maxLines: Int = Int.MAX_VALUE,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.animateContentSize()) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            label = {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            },
+            leadingIcon = leadingIcon,
+            isError = errorMessage != null,
+            singleLine = singleLine,
+            minLines = if (singleLine) 1 else minLines,
+            maxLines = if (singleLine) 1 else maxLines,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                errorBorderColor = MaterialTheme.colorScheme.error,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                errorLabelColor = MaterialTheme.colorScheme.error
+            ),
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        AnimatedVisibility(
+            visible = errorMessage != null,
+            enter = slideInVertically() + fadeIn(),
+            exit = slideOutVertically() + fadeOut()
+        ) {
+            errorMessage?.let { error ->
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Error,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = error,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
 }
