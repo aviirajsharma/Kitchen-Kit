@@ -1,7 +1,7 @@
 # 🍳 Kitchen-Kit with ChefMate AI
 
 <div align="center">
-  <img src="app_icon.png" width="120" height="120" alt="Kitchen-Kit App Icon"/>
+  <img src="screenshots/kichen_kit.png" width="120" height="120" alt="Kitchen-Kit App Icon"/>
   <br><br>
   
   [![Android](https://img.shields.io/badge/Platform-Android-green.svg?style=for-the-badge)](https://android.com)
@@ -30,17 +30,25 @@
 
 </div>
 
-## 🛠️ Tech Stack
+## 🤖 ChefMate AI Assistant
 
 <div align="center">
 
-| Frontend | Backend | AI & Tools |
+### 🧠 What ChefMate Can Do
+
+| Feature | Description | Example |
 |:---:|:---:|:---:|
-| Jetpack Compose | Room Database | Google Gemini AI |
-| Material 3 UI | Local Storage | Hilt DI |
-| Navigation Component | MVVM Architecture | Kotlin Coroutines |
+| 💡 **Recipe Suggestions** | Personalized recommendations | "What can I make with Paneer?" |
+| 🍳 **Cooking Tips** | Expert techniques | "How to perfectly sear steak?" |
+| 🔄 **Substitutions** | Alternative ingredients | "Replace eggs in baking?" |
+| 🛡️ **Food Safety** | Health & safety advice | "How long to store leftovers?" |
+
+<br>
+
+**⚠️ Note: ChefMate responds only to cooking and food-related questions!**
 
 </div>
+
 
 ## 📱 Screenshots
 
@@ -104,6 +112,19 @@
 
 </div>
 
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Frontend | Backend | AI & Tools |
+|:---:|:---:|:---:|
+| Jetpack Compose | Room Database | Google Gemini AI |
+| Material 3 UI | Local Storage | Hilt DI |
+| Navigation Component | MVVM Architecture | Kotlin Coroutines |
+
+</div>
+
+
 ## 🚀 Quick Start Guide
 
 <div align="center">
@@ -133,32 +154,13 @@
 
 ### 🔐 API Key Setup
 
-```kotlin
+
+``` kotlin
 // 📁 utils/Constants.kt
 const val API_KEY = "your_gemini_api_key_here"
 ```
-
 <div align="center">
   <strong>🔗 Get your free API key from Google AI Studio</strong>
-</div>
-
-## 🤖 ChefMate AI Assistant
-
-<div align="center">
-
-### 🧠 What ChefMate Can Do
-
-| Feature | Description | Example |
-|:---:|:---:|:---:|
-| 💡 **Recipe Suggestions** | Personalized recommendations | "What can I make with Paneer?" |
-| 🍳 **Cooking Tips** | Expert techniques | "How to perfectly sear steak?" |
-| 🔄 **Substitutions** | Alternative ingredients | "Replace eggs in baking?" |
-| 🛡️ **Food Safety** | Health & safety advice | "How long to store leftovers?" |
-
-<br>
-
-**⚠️ Note: ChefMate responds only to cooking and food-related questions!**
-
 </div>
 
 ## 📁 Project Architecture
@@ -215,7 +217,7 @@ Feel free to use this project for learning and development
   
   <br>
   
-  [![GitHub stars](https://img.shields.io/github/stars/yourusername/kitchen-kit?style=social)](https://github.com/yourusername/kitchen-kit/stargazers)
-  [![GitHub forks](https://img.shields.io/github/forks/yourusername/kitchen-kit?style=social)](https://github.com/yourusername/kitchen-kit/network/members)
+  [![GitHub stars](https://img.shields.io/github/stars/aviirajsharma/kitchen-kit?style=social)](https://github.com/aviirajsharma/kitchen-kit/stargazers)
+  [![GitHub forks](https://img.shields.io/github/forks/aviirajsharma/kitchen-kit?style=social)](https://github.com/aviirajsharma/kitchen-kit/network/members)
   
 </div>
