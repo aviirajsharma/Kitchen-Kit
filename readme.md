@@ -150,7 +150,7 @@ const val API_KEY = "your_gemini_api_key_here"
 
 | Feature | Description | Example |
 |:---:|:---:|:---:|
-| 💡 **Recipe Suggestions** | Personalized recommendations | "What can I make with chicken?" |
+| 💡 **Recipe Suggestions** | Personalized recommendations | "What can I make with Paneer?" |
 | 🍳 **Cooking Tips** | Expert techniques | "How to perfectly sear steak?" |
 | 🔄 **Substitutions** | Alternative ingredients | "Replace eggs in baking?" |
 | 🛡️ **Food Safety** | Health & safety advice | "How long to store leftovers?" |
@@ -167,12 +167,12 @@ const val API_KEY = "your_gemini_api_key_here"
 
 ```
 📦 Kitchen-Kit
-├── 📂 data/              # 🗄️  Room database & repositories
-├── 📂 domain/            # 🎯  Business logic & use cases  
-├── 📂 presentation/      # 🖼️  ViewModels & UI state
-├── 📂 ui/               # 🎨  Jetpack Compose screens
-├── 📂 di/               # 💉  Hilt dependency injection
-└── 📂 utils/            # 🔧  Constants & helper functions
+📂 data/ --------------> # Room database & repositories
+📂 domain/ --------------> # Business logic & use cases  
+📂 presentation/ -------------> # ViewModels & UI state
+📂 ui/ ---------------------> # Jetpack Compose screens
+📂 di/ -------------------> # Hilt dependency injection
+📂 utils/ -------------> # Constants & helper functions
 ```
 
 </div>
